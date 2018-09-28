@@ -1,14 +1,27 @@
 import React, {Component} from 'react'
-import {View, Text, Dimensions, ScrollView, TextInput, TouchableOpacity, FlatList} from 'react-native'
+import {View, Text, Dimensions, ScrollView, TextInput, TouchableOpacity, FlatList,RefreshControl} from 'react-native'
 import ImageSlider from 'react-native-image-slider'
 import {colors} from "../../constants/colors";
 import CellQuickSearch from "./cell/CellQuickSearch";
 import CellMostSearch from "./cell/CellMostSearch";
+import CellNewRoomDetail from "./cell/CellNewRoomDetail";
 
 const {width, height} = Dimensions.get('window');
 
 export default class Search extends Component {
+
+  componentDidMount() {
+    this.fetchData()
+  }
+
+  async fetchData() {
+    this.props.getMostSearch()
+    this.props.getNewRoom()
+  }
+
   render() {
+    const {mostSearch, newRoom} = this.props
+
     const images = [
       {url: 'https://placeimg.com/640/640/nature'},
       {url: 'https://placeimg.com/640/640/people'},
@@ -16,7 +29,14 @@ export default class Search extends Component {
       {url: 'https://placeimg.com/640/640/beer'},
     ];
     return (
-      <ScrollView style={{flex: 1}}>
+      <ScrollView style={{flex: 1}}
+                  refreshControl={
+                    <RefreshControl
+                      refreshing={false}
+                      onRefresh={() => this.fetchData()}
+                      tintColor={colors.black}
+                    />
+                  }>
         <View style={{flex: 1}}>
           <View style={{width, height: 0.3 * height}}>
             <ImageSlider
@@ -28,8 +48,8 @@ export default class Search extends Component {
             width,
             alignItems: 'center',
             justifyContent: 'center',
-            position: 'absolute',
-            top: 0.25 * height
+            //position: 'absolute',
+            top: -25,
           }}>
             <View style={{
               width: 0.9 * width,
@@ -87,35 +107,58 @@ export default class Search extends Component {
 
             <View style={{flex: 1, width: 0.9 * width}}>
               <Text style={{marginVertical: 20, fontSize: 16}}>Xu hướng tìm kiếm</Text>
-              <View style={{width, flexDirection: 'row'}}>
-                <View style={{width: 0.9 * width / 3, height: 0.9 * width / 3}}>
-                  <CellMostSearch/>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between'}}>
+                <View style={{width: 0.9 * width / 3 - 5, height: 0.9 * width / 3}}>
+                  <CellMostSearch data={mostSearch[0]}/>
                 </View>
-                <View style={{width: 0.9 * width / 3, height: 0.9 * width / 3, marginLeft: 5}}>
-                  <CellMostSearch/>
+                <View style={{width: 0.85 * width / 3  - 5, height: 0.9 * width / 3}}>
+                  <CellMostSearch data={mostSearch[1]}/>
                 </View>
-                <View style={{width: 0.9 * width / 3, height: 0.9 * width / 3, marginLeft: 5}}>
-                  <CellMostSearch/>
+                <View style={{width: 0.85 * width / 3  - 5, height: 0.9 * width / 3}}>
+                  <CellMostSearch data={mostSearch[2]}/>
                 </View>
 
               </View>
 
-              <View style={{width, flexDirection: 'row', marginTop: 5}}>
-                <View style={{width: 0.9 * width / 3, height: 0.9 * width / 3}}>
-                  <CellMostSearch/>
+              <View style={{flexDirection: 'row', marginTop: 5, justifyContent: 'space-between'}}>
+                <View style={{width: 0.9 * width / 3 - 5, height: 0.9 * width / 3}}>
+                  <CellMostSearch data={mostSearch[3]}/>
                 </View>
-                <View style={{width: 0.9 * width / 3, height: 0.9 * width / 3, marginLeft: 5}}>
-                  <CellMostSearch/>
+                <View style={{width: 0.9 * width / 3 - 5, height: 0.9 * width / 3}}>
+                  <CellMostSearch data={mostSearch[4]}/>
                 </View>
-                <View style={{width: 0.9 * width / 3, height: 0.9 * width / 3, marginLeft: 5}}>
-                  <CellMostSearch/>
+                <View style={{width: 0.9 * width / 3 - 5, height: 0.9 * width / 3}}>
+                  <CellMostSearch data={mostSearch[5]}/>
                 </View>
 
               </View>
 
 
               <Text style={{marginVertical: 20, fontSize: 16}}>Phòng mới</Text>
+
+              <View style={{width,  height: 400}}>
+              <FlatList
+                data={newRoom}
+                renderItem={({item}) => <TouchableOpacity style={{
+                  marginLeft: 5,
+                  width: 0.8*width,
+                  height: 100,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: 5,
+                }} onPress={() => {
+                }}>
+
+                  <CellNewRoomDetail data={item}/>
+
+                </TouchableOpacity>}
+                keyExtractor={(item, index) => index.toString()}/>
+              </View>
             </View>
+
+            <TouchableOpacity style={{width: 0.85*width, height: 40, justifyContent: 'center', alignItems: 'center'}}>
+              <Text>Xem tất cả</Text>
+            </TouchableOpacity>
 
 
           </View>
